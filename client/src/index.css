@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #071018;
+    color: white;
+    font-family: Inter, sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    color-scheme: dark;
+}
+
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+* {
+    -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.ai-orbit-border {
+    position: relative;
+    background:
+        conic-gradient(from var(--ai-orbit-angle, 0deg),
+            transparent 0deg,
+            transparent 52deg,
+            #00f0ff 78deg,
+            #7c3cff 112deg,
+            #ff4ecd 145deg,
+            #ffe66d 172deg,
+            transparent 205deg,
+            transparent 360deg);
+    animation: ai-orbit-spin 4s linear infinite;
+}
+
+@property --ai-orbit-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@keyframes ai-orbit-spin {
+    to {
+        --ai-orbit-angle: 360deg;
+    }
+}

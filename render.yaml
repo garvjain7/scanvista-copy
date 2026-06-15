@@ -1,0 +1,90 @@
+# ScanVista — Render Blueprint
+
+# Frontend:   https://scanvista.onrender.com
+# Backend API: https://scanvista-api.onrender.com
+# AI Service:  https://scanvista-ai.onrender.com
+# (Future) Admin: https://scanvista-admin.onrender.com
+
+services:
+  # ── Backend API (Node/Express) ───────────────────────────────
+  - type: web
+    name: scanvista-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    preDeployCommand: npm run ensure-db
+    startCommand: npm start
+    healthCheckPath: /health
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: CLIENT_URL
+        value: https://scanvista.onrender.com
+
+      - key: AI_SERVICE_URL
+        value: https://scanvista-ai.onrender.com
+
+      # Neon DB connection (MANUAL - set in Render dashboard)
+      - key: DATABASE_URL
+        sync: false
+
+      # Redis connection for rate limiting (MANUAL - set in Render dashboard)
+      - key: REDIS_URL
+        sync: false
+
+      - key: JWT_SECRET
+        generateValue: true
+
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+
+      # Optional external services
+      - key: SUPABASE_URL
+        sync: false
+
+      - key: SUPABASE_KEY
+        sync: false
+
+  # ── AI Service (FastAPI / Python Docker) ───────────────────────
+  - type: web
+    name: scanvista-ai
+    runtime: docker
+    region: oregon
+    plan: free
+    rootDir: ai-service
+    healthCheckPath: /health
+
+    envVars:
+      - key: AI_SERVICE_PORT
+        value: 8000
+
+      # OpenAI API Key (MANUAL - set in Render dashboard)
+      - key: OPENAI_API_KEY
+        sync: false
+
+      # Database connection (MANUAL - set in Render dashboard)
+      - key: DATABASE_URL
+        sync: false
+
+  # ── Frontend (Vite static site) ───────────────────────────────
+  - type: web
+    name: scanvista
+    runtime: static
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+
+    pullRequestPreviewsEnabled: true
+
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    envVars:
+      - key: VITE_API_URL
+        value: https://scanvista-api.onrender.com/api
